@@ -1,2 +1,3 @@
-# hiphp
+# typecho install script
+
 # author kis
