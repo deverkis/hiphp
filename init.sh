@@ -1,4 +1,6 @@
 #!/bin/bash
+mkdir -p /data/www/typecho
+cd /data/www/typecho
 mkdir -p mysql
 mkdir -p nginx
 mkdir -p ssl
@@ -37,13 +39,13 @@ version: "3"
 services:
   nginx:
     image: nginx
-    container_name: deverphp
+    container_name: deverserver
     ports:
       - "80:80"
       - "443:443"
     restart: always
     volumes:
-      - ./data/uploads:/usr/uplaods
+      - ./data:/usr/uploads
       - ./web:/var/www/html
       - ./ssl:/var/www/ssl
       - ./nginx:/etc/nginx/conf.d
@@ -58,8 +60,8 @@ services:
     ports:
       - "9000:9000"
     volumes:
+      - ./data:/usr/uploads
       - ./web:/var/www/html
-      - ./data/uploads:/usr/uplaods
     environment:
       - TZ=Asia/Shanghai
     depends_on:
@@ -90,7 +92,7 @@ server {
     server_name localhost;
     root /var/www/html;
     index index.php;
-    access_log /var/log/nginx/web_access.log main;
+    access_log /var/log/nginx/typecho_access.log main;
     if (!-e $request_filename) {
         rewrite ^(.*)$ /index.php$1 last;
     }
@@ -108,14 +110,15 @@ server {
 ' > nginx/default.conf
  
 echo '
-# MySQLçš„rootç”¨æˆ·é»˜è®¤å¯†ç ï¼Œè¿™é‡Œè‡ªè¡Œæ›´æ”¹
+# MySQLµÄrootÓÃ»§Ä¬ÈÏÃÜÂë£¬ÕâÀï×ÔÐÐ¸ü¸Ä
 MYSQL_ROOT_PASSWORD=deverphp668
-# MySQLé•œåƒåˆ›å»ºæ—¶è‡ªåŠ¨åˆ›å»ºçš„æ•°æ®åº“åç§°
+# MySQL¾µÏñ´´½¨Ê±×Ô¶¯´´½¨µÄÊý¾Ý¿âÃû³Æ
 MYSQL_DATABASE=typechodb
-# MySQLé•œåƒåˆ›å»ºæ—¶è‡ªåŠ¨åˆ›å»ºçš„ç”¨æˆ·å
+# MySQL¾µÏñ´´½¨Ê±×Ô¶¯´´½¨µÄÓÃ»§Ãû
 MYSQL_USER=deverphp
-# MySQLé•œåƒåˆ›å»ºæ—¶è‡ªåŠ¨åˆ›å»ºçš„ç”¨æˆ·å¯†ç 
+# MySQL¾µÏñ´´½¨Ê±×Ô¶¯´´½¨µÄÓÃ»§ÃÜÂë
 MYSQL_PASSWORD=deverphp668
-# æ—¶åŒº
+# Ê±Çø
 TZ=Asia/Shanghai
 ' > mysql.env
+ 
